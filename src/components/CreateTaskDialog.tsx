@@ -34,8 +34,17 @@ export default function CreateTaskDialog() {
       completed: yup.boolean(),
       important: yup.boolean(),
     }),
-    onSubmit: (values) => {
+    onSubmit: async(values) => {
       console.log(values);
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values)
+      })
+      console.log(response);
+      
       toast({
         title: "Scheduled: Catch up ",
         description: "Friday, February 10, 2023 at 5:57 PM",
