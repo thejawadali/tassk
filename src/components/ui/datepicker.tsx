@@ -31,7 +31,7 @@ function DatePicker({
 }: DatePickerProps) {
   return (
     <div>
-      {label && <Label className="block mb-[1px]" htmlFor={id}>{label}</Label>}
+      {label && <Label className="block mb-[2px]" htmlFor={id}>{label}</Label>}
       <Popover>
         <PopoverTrigger asChild>
           <Button
