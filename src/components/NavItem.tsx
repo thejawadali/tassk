@@ -6,10 +6,8 @@ export default function NavItem({ active, href, label, icon }: { active?: boolea
   return (
     <Link
       href={href}
-      className={`flex items-center text-zinc-400 relative gap-x-3 justify-center ${active ? 'bg-zinc-700' : 'hover:bg-zinc-700'} w-full py-2`}
+      className={`flex items-center dark:text-zinc-400 relative gap-x-3 justify-center ${active ? 'bg-zinc-100 dark:bg-zinc-700' : 'dark:hover:bg-zinc-700 hover:bg-zinc-100'} w-full py-2`}
     >
-      {/* icon */}
-      {/* <HomeIcon size={20} /> */}
       {icon}
       {label}
       {active && (

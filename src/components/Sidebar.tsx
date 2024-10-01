@@ -42,7 +42,7 @@ export default function Sidebar() {
     <div className="w-[12rem] min-w-[12rem] flex flex-col justify-between  border-gray-200 py-6 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white h-full border-2 bg-white rounded-2xl">
       {user ? (
         <>
-          <div className="hover:border-opacity-100 border-opacity-0 border-2 border-zinc-700 mx-6 p-3 box-border hover:bg-zinc-900 rounded-2xl cursor-pointer flex items-center gap-x-4">
+          <div className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-2xl cursor-pointer flex items-center gap-x-4">
             <UserButton />
             <h1 className="capitalize relative z-10 text-base flex flex-col leading-6">
               {user?.firstName} {user?.lastName}
@@ -63,7 +63,7 @@ export default function Sidebar() {
               />
             ))}
           </div>
-          <button className="inline-flex items-center gap-x-4 hover:bg-zinc-900 mx-auto p-3 rounded-xl">
+          <button className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 hover:bg-zinc-100 dark:hover:bg-zinc-900 inline-flex items-center gap-x-4 p-3 rounded-xl">
             <LogOutIcon size={20}></LogOutIcon>
             Sign Out
           </button>
