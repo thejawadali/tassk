@@ -38,9 +38,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="md:p-8 p-4 bg-gray-50 dark:bg-zinc-900 w-full h-screen flex gap-4 md:gap-8">
+            <div className="md:p-8 p-4 bg-zinc-50 dark:bg-zinc-900 w-full h-screen flex gap-4 md:gap-8">
               <Sidebar />
-              <div className="w-full h-full border-2 border-gray-200 bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white rounded-2xl overflow-y-auto p-6">{children}</div>
+              <div className="w-full h-full border-2 border-zinc-200 bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white rounded-2xl overflow-y-auto p-6">{children}</div>
             </div>
           </ThemeProvider>
         </body>
