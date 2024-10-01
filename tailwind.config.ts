@@ -55,7 +55,10 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
+  		},
+      fontSize: {
+        'clamp': 'clamp(1.5rem, 2vw, 2rem)',
+      },
   	}
   },
   plugins: [require("tailwindcss-animate")],

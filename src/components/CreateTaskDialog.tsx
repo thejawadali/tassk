@@ -15,10 +15,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { useToast } from "../hooks/use-toast"
+import { useToast } from "../hooks/use-toast";
+import { PlusIcon } from "lucide-react";
 
 export default function CreateTaskDialog() {
-  const { toast } = useToast()
+  const { toast } = useToast();
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -34,34 +35,37 @@ export default function CreateTaskDialog() {
       completed: yup.boolean(),
       important: yup.boolean(),
     }),
-    onSubmit: async(values) => {
+    onSubmit: async (values) => {
       console.log(values);
-      const response = await fetch('/api/tasks', {
-        method: 'POST',
+      const response = await fetch("/api/tasks", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(values)
-      })
+        body: JSON.stringify(values),
+      });
       console.log(response);
-      
+
       toast({
         title: "Scheduled: Catch up ",
         description: "Friday, February 10, 2023 at 5:57 PM",
-      })
+      });
     },
   });
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create</Button>
+        <button className="rounded-full p-2 border border-dashed">
+          <PlusIcon size={20} />
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
           <DialogDescription>
-            Provide key information such as task name, description and due date etc.
+            Provide key information such as task name, description and due date
+            etc.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={formik.handleSubmit} className="space-y-3">
@@ -97,7 +101,9 @@ export default function CreateTaskDialog() {
             <Switch
               id="completed"
               checked={formik.values.completed}
-              onCheckedChange={(checked) => formik.setFieldValue("completed", checked)}
+              onCheckedChange={(checked) =>
+                formik.setFieldValue("completed", checked)
+              }
             />
           </div>
           <div className="flex items-center justify-between">
@@ -105,7 +111,9 @@ export default function CreateTaskDialog() {
             <Switch
               id="important"
               checked={formik.values.important}
-              onCheckedChange={(checked) => formik.setFieldValue("important", checked)}
+              onCheckedChange={(checked) =>
+                formik.setFieldValue("important", checked)
+              }
             />
           </div>
           <Button className="w-full mt-4" type="submit">

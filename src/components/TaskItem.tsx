@@ -22,7 +22,7 @@ export default function TaskItem({
   return (
     <div
       onClick={onEdit}
-      className="py-[1.2rem] cursor-pointer relative px-4 rounded-2xl group bg-zinc-100 dark:bg-zinc-700 shadow border-2 dark:border-zinc-600 border-zinc-200 h-[16rem] flex flex-col gap-2"
+      className="py-[1.2rem] hover:shadow-2xl cursor-pointer relative px-4 rounded-2xl group bg-zinc-100 dark:bg-zinc-700 border-2 dark:border-zinc-600 border-zinc-200 h-[16rem] flex flex-col gap-2"
     >
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold max-h-[1.8rem] truncate">
@@ -32,9 +32,9 @@ export default function TaskItem({
           <TrashIcon size={16} />
         </button>
       </div>
-      <p className="text-sm overflow-hidden h-32">{description}</p>
       {/* date */}
       <p className="text-sm opacity-50">{date}</p>
+      <p className="text-sm overflow-hidden h-32">{description}</p>
       {/* footer */}
       <div className="flex items-center gap-5">
         <Button className="w-full">
