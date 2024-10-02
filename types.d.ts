@@ -6,3 +6,5 @@ export interface Task {
   completed: boolean
   important: boolean
 }
+
+export type TaskType = "all" | "completed" | "important" | "urgent"

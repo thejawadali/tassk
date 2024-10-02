@@ -39,9 +39,9 @@ export default function Sidebar() {
     },
     {
       id: 4,
-      title: "Do It Now",
+      title: "Urgent",
       icon: <ListIcon size={20} />,
-      link: "/incomplete",
+      link: "/urgent",
     },
   ];
 

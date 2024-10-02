@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextResponse } from "next/server"
 import { PrismaClient } from '@prisma/client'
 import { auth } from "@clerk/nextjs/server"
+import { TaskType } from "../../../../types"
 const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
@@ -31,16 +33,52 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  const url = new URL(req.url)
+  const type = url.searchParams.get("type") as TaskType
+  console.log(type)
+
+  let obj = {}
+  switch (type) {
+    case "all":
+      obj = {}
+      break
+
+    case "important":
+      obj = { important: true }
+      break
+
+    case "completed":
+      obj = { completed: true }
+      break
+    case "urgent":
+      const startOfToday = new Date()
+      startOfToday.setHours(0, 0, 0, 0)
+      const endOfToday = new Date()
+      endOfToday.setHours(23, 59, 59, 999)
+      obj = {
+        important: true, completed: false, date: {
+          gte: startOfToday,
+          lte: endOfToday,
+        }
+      }
+
+    default:
+      break
+  }
+
+
   try {
     const { userId } = auth()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
+
     const tasks = await prisma.task.findMany({
       where: {
-        userId
-      }
+        userId,
+        ...obj
+      },
     })
     return NextResponse.json({ tasks }, { status: 200 })
   } catch (error) {

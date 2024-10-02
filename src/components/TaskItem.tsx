@@ -1,5 +1,6 @@
 "use client";
 import { TrashIcon } from "lucide-react";
+import dayjs from "dayjs";
 import { Button } from "./ui/button";
 
 interface Props {
@@ -33,7 +34,7 @@ export default function TaskItem({
         </button>
       </div>
       {/* date */}
-      <p className="text-sm opacity-50">{date}</p>
+      <p className="text-sm opacity-50">{dayjs(date).format("MMM D, YYYY")}</p>
       <p className="text-sm overflow-hidden h-32">{description}</p>
       {/* footer */}
       <div className="flex items-center gap-5">

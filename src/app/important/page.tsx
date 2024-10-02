@@ -1,11 +1,11 @@
 // "use client";
 
-import Tasks from "../components/Tasks"
+import Tasks from "../../components/Tasks";
 
 export default function Home() {
   return (
     <div>
-      <Tasks type="all"/>
+      <Tasks type="completed" />
     </div>
   );
 }
