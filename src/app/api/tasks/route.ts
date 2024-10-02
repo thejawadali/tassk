@@ -5,11 +5,7 @@ const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
   try {
-
-
     const { userId } = auth()
-    console.log(userId);
-    
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
@@ -31,10 +27,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ task }, { status: 201 })
 
   } catch (error) {
-    debugger
-    console.log(error)
-
     return NextResponse.json({ error: "Error creating task" }, { status: 400 })
+  }
+}
 
+export async function GET() {
+  try {
+    const { userId } = auth()
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    const tasks = await prisma.task.findMany({
+      where: {
+        userId
+      }
+    })
+    return NextResponse.json({ tasks }, { status: 200 })
+  } catch (error) {
+    return NextResponse.json({ error: "Error fetching tasks" }, { status: 400 })
   }
 }
