@@ -5,10 +5,14 @@ import CreateTaskDialog from "../components/CreateTaskDialog";
 import TaskItem from "./TaskItem";
 import EmptyTaskItem from "./EmptyTaskItem";
 import { useEffect, useState } from "react";
+import { PlusIcon } from "lucide-react";
 
 export default function Tasks({ type }: { type: TaskType }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task>()
+
   const fetchTasks = async () => {
     setLoading(true);
     const { data } = await axios.get("/api/tasks?type=" + type);
@@ -19,6 +23,25 @@ export default function Tasks({ type }: { type: TaskType }) {
     fetchTasks();
   }, []);
 
+  function onOpenChange(open: boolean) {
+    setShowDialog(open);
+    if (!open) {
+      setTaskToEdit(undefined);
+    }
+  }
+
+  async function deleteTask(taskId: string) {
+    await axios.delete(`/api/tasks/${taskId}`);
+    fetchTasks();
+  }
+
+  function openEditDialog(task: Task) {
+    setTaskToEdit(task);
+    setTimeout(() => {
+      setShowDialog(true);
+    }, 4000);
+  }
+
   if (loading) {
     return <div className="">Loading...</div>;
   }
@@ -27,7 +50,13 @@ export default function Tasks({ type }: { type: TaskType }) {
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-clamp">All Tasks</h1>
-        <CreateTaskDialog></CreateTaskDialog>
+        {taskToEdit?.title}
+        <button
+          className="rounded-full p-2 border border-dashed"
+          onClick={() => setShowDialog(true)}
+        >
+          <PlusIcon size={20} />
+        </button>
       </div>
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
         {tasks.map((task) => (
@@ -37,12 +66,13 @@ export default function Tasks({ type }: { type: TaskType }) {
             description={task.description}
             date={task.date}
             isCompleted={task.completed}
-            onDelete={() => {}}
-            onEdit={() => {}}
+            onDelete={() => deleteTask(task.id)}
+            onEdit={() => openEditDialog(task)}
           />
         ))}
-        <EmptyTaskItem onClick={() => {}} />
+        <EmptyTaskItem onClick={() => setShowDialog(true)} />
       </div>
+      <CreateTaskDialog open={showDialog} onOpenChange={onOpenChange} task={taskToEdit}/>
     </>
   );
 }
