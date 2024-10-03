@@ -11,7 +11,7 @@ export default function Tasks({ type }: { type: TaskType }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<Task>()
+  const [taskToEdit, setTaskToEdit] = useState<Task>();
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -37,9 +37,7 @@ export default function Tasks({ type }: { type: TaskType }) {
 
   function openEditDialog(task: Task) {
     setTaskToEdit(task);
-    setTimeout(() => {
-      setShowDialog(true);
-    }, 4000);
+    setShowDialog(true);
   }
 
   if (loading) {
@@ -50,7 +48,7 @@ export default function Tasks({ type }: { type: TaskType }) {
     <>
       <div className="flex items-center justify-between">
         <h1 className="text-clamp">All Tasks</h1>
-        {taskToEdit?.title}
+        {/* {taskToEdit?.title} */}
         <button
           className="rounded-full p-2 border border-dashed"
           onClick={() => setShowDialog(true)}
@@ -72,7 +70,12 @@ export default function Tasks({ type }: { type: TaskType }) {
         ))}
         <EmptyTaskItem onClick={() => setShowDialog(true)} />
       </div>
-      <CreateTaskDialog open={showDialog} onOpenChange={onOpenChange} task={taskToEdit}/>
+      <CreateTaskDialog
+        open={showDialog}
+        onOpenChange={onOpenChange}
+        task={taskToEdit}
+        onTaskCreated={fetchTasks}
+      />
     </>
   );
 }

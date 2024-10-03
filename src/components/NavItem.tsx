@@ -10,7 +10,7 @@ export default function NavItem({ active, href, label, icon }: { active?: boolea
       {icon}
       {label}
       {active && (
-        <div className="absolute w-1 inset-y-0 -right-[1px] bg-gradient-to-b  from-sky-500 via-30% to-emerald-500 to-90% rounded-l" />
+        <div className="absolute w-1 inset-y-0 -right-[1px] bg-primary rounded-l" />
       )}
     </Link>
   );

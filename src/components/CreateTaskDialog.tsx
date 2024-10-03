@@ -1,32 +1,41 @@
 "use client";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { DatePicker } from "./ui/datepicker";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
-import { Button } from "./ui/button";
+import axios from "axios"
+import { useFormik } from "formik"
+import * as yup from "yup"
+import { Task } from "../../types"
+import { useToast } from "../hooks/use-toast"
+import { Button } from "./ui/button"
+import { DatePicker } from "./ui/datepicker"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { useToast } from "../hooks/use-toast";
-import { PlusIcon } from "lucide-react";
+  DialogTitle
+} from "./ui/dialog"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
+import { Switch } from "./ui/switch"
+import { Textarea } from "./ui/textarea"
+import { useState } from "react"
 
-export default function CreateTaskDialog() {
+interface Props {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  task?: Task,
+  onTaskCreated: (task: Task) => void
+}
+
+export default function CreateTaskDialog({open, onOpenChange, task, onTaskCreated}: Props) {
+  const [savingTask, setSavingTask] = useState(false)
   const { toast } = useToast();
   const formik = useFormik({
     initialValues: {
-      title: "",
-      description: "",
-      date: new Date(),
-      completed: false,
-      important: false,
+      title: task?.title || "",
+      description: task?.description || "",
+      date: new Date(task?.date || new Date()),
+      completed: task?.completed || false,
+      important: task?.important || false,
     },
     validationSchema: yup.object({
       title: yup.string().required("Title is required"),
@@ -36,14 +45,19 @@ export default function CreateTaskDialog() {
       important: yup.boolean(),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      const response = await fetch("/api/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      });
+      setSavingTask(true)
+      let response = null
+      if (task) {
+        // updating
+        response = await axios.put(`/api/tasks/${task.id}`, values)
+      } else{
+        // create new one
+        response = await axios.post("/api/tasks", values)
+      }
+
+      onTaskCreated(response.data.task as Task)
+      onOpenChange(false)
+      setSavingTask(false)
       console.log(response);
 
       toast({
@@ -54,12 +68,7 @@ export default function CreateTaskDialog() {
   });
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <button className="rounded-full p-2 border border-dashed">
-          <PlusIcon size={20} />
-        </button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
@@ -116,8 +125,8 @@ export default function CreateTaskDialog() {
               }
             />
           </div>
-          <Button className="w-full mt-4" type="submit">
-            Submit
+          <Button className="w-full mt-4" type="submit" loading={savingTask}>
+            {task ? "Update" : "Save"}
           </Button>
         </form>
       </DialogContent>
