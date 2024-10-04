@@ -11,6 +11,7 @@ interface Props {
   date: string;
   isCompleted: boolean;
   onDelete: () => void;
+  onToggleComplete: () => void;
   onEdit: () => void;
 }
 
@@ -20,6 +21,7 @@ export default function TaskItem({
   date,
   isCompleted,
   onDelete,
+  onToggleComplete,
   onEdit,
 }: Props) {
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -77,7 +79,7 @@ export default function TaskItem({
         <p className="text-sm overflow-hidden h-32">{description}</p>
         {/* footer */}
         <div className="flex items-center gap-5">
-          <Button className="w-full">
+          <Button className="w-full" onClick={(e) => {e.stopPropagation(); onToggleComplete()}}>
             Mark as {isCompleted ? "Incomplete" : "Complete"}
           </Button>
         </div>

@@ -5,11 +5,11 @@ import CreateTaskDialog from "../components/CreateTaskDialog";
 import TaskItem from "./TaskItem";
 import EmptyTaskItem from "./EmptyTaskItem";
 import { useEffect, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { LoaderCircleIcon, PlusIcon } from "lucide-react";
 
 export default function Tasks({ type }: { type: TaskType }) {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task>();
 
@@ -39,9 +39,26 @@ export default function Tasks({ type }: { type: TaskType }) {
     setTaskToEdit(task);
     setShowDialog(true);
   }
+  async function toggleTaskCompleteStatus(completed: boolean, taskId: string) {
+    try {
+      const { data } = await axios.patch(
+        `/api/tasks/${taskId}/toggle-complete`,
+        {
+          completed: !completed,
+        }
+      );
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   if (loading) {
-    return <div className="">Loading...</div>;
+    return (
+      <div className="h-full flex justify-center items-center">
+        <LoaderCircleIcon className="mr-2 h-10 w-10 animate-spin" />
+      </div>
+    );
   }
 
   return (
@@ -64,6 +81,9 @@ export default function Tasks({ type }: { type: TaskType }) {
             description={task.description}
             date={task.date}
             isCompleted={task.completed}
+            onToggleComplete={() =>
+              toggleTaskCompleteStatus(task.completed, task.id)
+            }
             onDelete={() => deleteTask(task.id)}
             onEdit={() => openEditDialog(task)}
           />
