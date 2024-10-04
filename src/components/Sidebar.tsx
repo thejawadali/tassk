@@ -1,23 +1,24 @@
 "use client";
-import { SignInButton, SignedOut } from "@clerk/nextjs"
+import { SignInButton, SignedOut } from "@clerk/nextjs";
 
-import { UserButton, useUser } from "@clerk/nextjs"
+import { UserButton, useUser } from "@clerk/nextjs";
 import {
   ArrowLeftIcon,
   CheckIcon,
   HomeIcon,
   ListIcon,
+  LoaderCircleIcon,
   LogOutIcon,
   MenuIcon,
-} from "lucide-react"
-import { usePathname } from "next/navigation"
-import NavItem from "./NavItem"
-import { useState } from "react"
+} from "lucide-react";
+import { usePathname } from "next/navigation";
+import NavItem from "./NavItem";
+import { useState } from "react";
 
 export default function Sidebar() {
   const { user } = useUser();
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(true)
+  const [collapsed, setCollapsed] = useState(true);
   const menu = [
     {
       id: 1,
@@ -46,9 +47,18 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className={`absolute h-[calc(100vh-2rem)] transition-transform duration-300 ease-[cubic-bezier(0.53, 0.21, 0, 1)] ${collapsed ? 'lg:translate-x-0 md:translate-x-[-225px] translate-x-[-216px]': 'translate-x-0'} z-50 lg:relative w-[12rem] min-w-[12rem] flex flex-col justify-between  border-gray-200 py-6 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white lg:h-full border-2 bg-white rounded-2xl`}>
-      <button className="block lg:hidden py-[0.8rem] px-[0.9rem] absolute right-[-51px] top-[1.8rem] rounded-tr-2xl rounded-br-2xl
-      bg-white dark:bg-zinc-800 border-2 dark:border-zinc-700 border-l-0" onClick={() => setCollapsed(!collapsed)}>
+    <div
+      className={`absolute h-[calc(100vh-2rem)] transition-transform duration-300 ease-[cubic-bezier(0.53, 0.21, 0, 1)] ${
+        collapsed
+          ? "lg:translate-x-0 md:translate-x-[-225px] translate-x-[-216px]"
+          : "translate-x-0"
+      } z-50 lg:relative w-[12rem] min-w-[12rem] flex flex-col justify-between  border-gray-200 py-6 dark:bg-zinc-800 dark:border-zinc-700 dark:text-white lg:h-full border-2 bg-white rounded-2xl`}
+    >
+      <button
+        className="block lg:hidden py-[0.8rem] px-[0.9rem] absolute right-[-51px] top-[1.8rem] rounded-tr-2xl rounded-br-2xl
+      bg-white dark:bg-zinc-800 border-2 dark:border-zinc-700 border-l-0"
+        onClick={() => setCollapsed(!collapsed)}
+      >
         {collapsed ? <MenuIcon size={20} /> : <ArrowLeftIcon size={20} />}
       </button>
       {user ? (
@@ -80,7 +90,9 @@ export default function Sidebar() {
           </button>
         </>
       ) : (
-        <div>loading...</div>
+        <div className="h-full flex justify-center items-center">
+          <LoaderCircleIcon className="mr-2 h-10 w-10 animate-spin" />
+        </div>
       )}
     </div>
   );
