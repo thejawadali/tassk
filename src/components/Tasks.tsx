@@ -12,7 +12,6 @@ export default function Tasks({ type }: { type: TaskType }) {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task>();
-  const [taskUpdating, setTaskUpdating] = useState(false);
   const fetchTasks = async () => {
     setLoading(true);
     const { data } = await axios.get("/api/tasks?type=" + type);
@@ -39,6 +38,9 @@ export default function Tasks({ type }: { type: TaskType }) {
   function onDeleteComplete(taskId: string) {
     const newTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(newTasks);
+  }
+  function onTaskCreated(task: Task) {
+    setTasks([...tasks, task]);
   }
 
   function openEditDialog(task: Task) {
@@ -86,7 +88,7 @@ export default function Tasks({ type }: { type: TaskType }) {
         open={showDialog}
         onOpenChange={onOpenChange}
         task={taskToEdit}
-        onTaskCreated={fetchTasks}
+        onTaskCreated={onTaskCreated}
       />
     </>
   );
