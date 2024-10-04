@@ -12,8 +12,7 @@ export default function Tasks({ type }: { type: TaskType }) {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task>();
-  
-
+  const [taskUpdating, setTaskUpdating] = useState(false);
   const fetchTasks = async () => {
     setLoading(true);
     const { data } = await axios.get("/api/tasks?type=" + type);
@@ -37,17 +36,15 @@ export default function Tasks({ type }: { type: TaskType }) {
     newTasks[index].completed = !newTasks[index].completed;
     setTasks(newTasks);
   }
-
-  async function deleteTask(taskId: string) {
-    await axios.delete(`/api/tasks/${taskId}`);
-    fetchTasks();
+  function onDeleteComplete(taskId: string) {
+    const newTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(newTasks);
   }
 
   function openEditDialog(task: Task) {
     setTaskToEdit(task);
     setShowDialog(true);
   }
-  
 
   if (loading) {
     return (
@@ -77,7 +74,7 @@ export default function Tasks({ type }: { type: TaskType }) {
             description={task.description}
             date={task.date}
             isCompleted={task.completed}
-            onDelete={() => deleteTask(task.id)}
+            onDeleteComplete={() => onDeleteComplete(task.id)}
             id={task.id}
             onToggleComplete={() => onToggleComplete(task.id)}
             onEdit={() => openEditDialog(task)}

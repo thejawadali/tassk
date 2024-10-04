@@ -1,7 +1,7 @@
 "use client";
 import dayjs from "dayjs";
 import axios from "axios";
-import { TrashIcon } from "lucide-react";
+import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -12,7 +12,7 @@ interface Props {
   date: string;
   id?: string;
   isCompleted: boolean;
-  onDelete: () => void;
+  onDeleteComplete: () => void;
   onToggleComplete: () => void;
   onEdit: () => void;
 }
@@ -23,12 +23,13 @@ export default function TaskItem({
   id,
   date,
   isCompleted,
-  onDelete,
+  onDeleteComplete,
   onToggleComplete,
   onEdit,
 }: Props) {
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   async function toggleTaskCompleteStatus(
     event: React.MouseEvent<HTMLButtonElement>
@@ -47,12 +48,30 @@ export default function TaskItem({
     }
   }
 
+  async function deleteTask() {
+    setLoading(true)
+    try {
+      await axios.delete(`/api/tasks/${id}`);
+      onDeleteComplete()
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false)
+    }
+  }
+
+
   return (
     <>
       <div
-        onClick={onEdit}
-        className="py-[1.2rem] hover:shadow-2xl cursor-pointer relative px-4 rounded-2xl group bg-zinc-100 dark:bg-zinc-700 border-2 dark:border-zinc-600 border-zinc-200 h-[16rem] flex flex-col gap-2"
+        onClick={() => (loading ? null : onEdit())}
+        className="py-[1.2rem] hover:shadow-2xl cursor-pointer relative px-4 overflow-hidden rounded-2xl group bg-zinc-100 dark:bg-zinc-700 border-2 dark:border-zinc-600 border-zinc-200 h-[16rem] flex flex-col gap-2"
       >
+        {loading && (
+          <div className="absolute inset-0 bg-background flex items-center justify-center opacity-50 z-10">
+            <LoaderCircleIcon className="mr-2 h-10 w-10 animate-spin text-foreground" />
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold max-h-[1.8rem] truncate">
             {title}
@@ -77,7 +96,7 @@ export default function TaskItem({
                     variant="destructive"
                     size="sm"
                     onClick={() => {
-                      onDelete();
+                      deleteTask();
                       setShowConfirmation(false);
                     }}
                     className="w-full"
