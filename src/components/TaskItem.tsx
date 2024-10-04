@@ -1,5 +1,6 @@
 "use client";
 import dayjs from "dayjs";
+import axios from "axios";
 import { TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -9,6 +10,7 @@ interface Props {
   title: string;
   description: string;
   date: string;
+  id?: string;
   isCompleted: boolean;
   onDelete: () => void;
   onToggleComplete: () => void;
@@ -18,13 +20,33 @@ interface Props {
 export default function TaskItem({
   title,
   description,
+  id,
   date,
   isCompleted,
   onDelete,
   onToggleComplete,
   onEdit,
 }: Props) {
+  const [statusUpdating, setStatusUpdating] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  async function toggleTaskCompleteStatus(
+    event: React.MouseEvent<HTMLButtonElement>
+  ) {
+    event.stopPropagation();
+    setStatusUpdating(true);
+    try {
+      await axios.patch(`/api/tasks/${id}/toggle-complete`, {
+        completed: !isCompleted,
+      });
+      onToggleComplete();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setStatusUpdating(false);
+    }
+  }
+
   return (
     <>
       <div
@@ -39,7 +61,10 @@ export default function TaskItem({
             <PopoverTrigger asChild>
               <button
                 className="min-w-4"
-                onClick={(e) => {e.stopPropagation();setShowConfirmation(true)}}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirmation(true);
+                }}
               >
                 <TrashIcon size={16} />
               </button>
@@ -79,7 +104,12 @@ export default function TaskItem({
         <p className="text-sm overflow-hidden h-32">{description}</p>
         {/* footer */}
         <div className="flex items-center gap-5">
-          <Button className="w-full" onClick={(e) => {e.stopPropagation(); onToggleComplete()}}>
+          <Button
+            className="w-full"
+            onClick={toggleTaskCompleteStatus}
+            loading={statusUpdating}
+            variant={isCompleted ? "destructive" : "default"}
+          >
             Mark as {isCompleted ? "Incomplete" : "Complete"}
           </Button>
         </div>

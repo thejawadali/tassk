@@ -5,7 +5,7 @@ import { NextResponse } from "next/server"
 
 const prisma = new PrismaClient()
 
-export async function PATCH(_req: Request, { params, request }: { params: { id: string }, request: Request }) {
+export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
     const { userId } = auth()
     const { id } = params
@@ -26,6 +26,6 @@ export async function PATCH(_req: Request, { params, request }: { params: { id: 
     return NextResponse.json({ task }, { status: 200 })
 
   } catch (error) {
-    return NextResponse.json({ error: "Error updating task", status: 400 })
+    return NextResponse.json({ error: "Error updating task" }, { status: 400 })
   }
 }

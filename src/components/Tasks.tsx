@@ -12,6 +12,7 @@ export default function Tasks({ type }: { type: TaskType }) {
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task>();
+  
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -30,6 +31,13 @@ export default function Tasks({ type }: { type: TaskType }) {
     }
   }
 
+  function onToggleComplete(taskId: string) {
+    const index = tasks.findIndex((task) => task.id === taskId);
+    const newTasks = [...tasks];
+    newTasks[index].completed = !newTasks[index].completed;
+    setTasks(newTasks);
+  }
+
   async function deleteTask(taskId: string) {
     await axios.delete(`/api/tasks/${taskId}`);
     fetchTasks();
@@ -39,19 +47,7 @@ export default function Tasks({ type }: { type: TaskType }) {
     setTaskToEdit(task);
     setShowDialog(true);
   }
-  async function toggleTaskCompleteStatus(completed: boolean, taskId: string) {
-    try {
-      const { data } = await axios.patch(
-        `/api/tasks/${taskId}/toggle-complete`,
-        {
-          completed: !completed,
-        }
-      );
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  
 
   if (loading) {
     return (
@@ -81,10 +77,9 @@ export default function Tasks({ type }: { type: TaskType }) {
             description={task.description}
             date={task.date}
             isCompleted={task.completed}
-            onToggleComplete={() =>
-              toggleTaskCompleteStatus(task.completed, task.id)
-            }
             onDelete={() => deleteTask(task.id)}
+            id={task.id}
+            onToggleComplete={() => onToggleComplete(task.id)}
             onEdit={() => openEditDialog(task)}
           />
         ))}
