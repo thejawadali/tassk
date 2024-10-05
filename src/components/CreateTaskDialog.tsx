@@ -1,33 +1,38 @@
 "use client";
-import axios from "axios"
-import { useFormik } from "formik"
-import * as yup from "yup"
-import { Task } from "../../types"
-import { useToast } from "../hooks/use-toast"
-import { Button } from "./ui/button"
-import { DatePicker } from "./ui/datepicker"
+import axios from "axios";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { Task } from "../../types";
+import { useToast } from "../hooks/use-toast";
+import { Button } from "./ui/button";
+import { DatePicker } from "./ui/datepicker";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogTitle
-} from "./ui/dialog"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
-import { Switch } from "./ui/switch"
-import { Textarea } from "./ui/textarea"
-import { useState } from "react"
+  DialogTitle,
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
+import { Textarea } from "./ui/textarea";
+import { useState } from "react";
 
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  task?: Task,
-  onTaskCreated: (task: Task) => void
+  task?: Task;
+  onTaskCreated: (task: Task) => void;
 }
 
-export default function CreateTaskDialog({open, onOpenChange, task, onTaskCreated}: Props) {
-  const [savingTask, setSavingTask] = useState(false)
+export default function CreateTaskDialog({
+  open,
+  onOpenChange,
+  task,
+  onTaskCreated,
+}: Props) {
+  const [savingTask, setSavingTask] = useState(false);
   const { toast } = useToast();
   const formik = useFormik({
     initialValues: {
@@ -45,19 +50,19 @@ export default function CreateTaskDialog({open, onOpenChange, task, onTaskCreate
       important: yup.boolean(),
     }),
     onSubmit: async (values) => {
-      setSavingTask(true)
-      let response = null
+      setSavingTask(true);
+      let response = null;
       if (task) {
         // updating
-        response = await axios.put(`/api/tasks/${task.id}`, values)
-      } else{
+        response = await axios.put(`/api/tasks/${task.id}`, values);
+      } else {
         // create new one
-        response = await axios.post("/api/tasks", values)
+        response = await axios.post("/api/tasks", values);
       }
 
-      onTaskCreated(response.data.task as Task)
-      onOpenChange(false)
-      setSavingTask(false)
+      onTaskCreated(response.data.task as Task);
+      onOpenChange(false);
+      setSavingTask(false);
       console.log(response);
 
       toast({
@@ -71,7 +76,7 @@ export default function CreateTaskDialog({open, onOpenChange, task, onTaskCreate
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create New Task</DialogTitle>
+          <DialogTitle>{task ? "Update" : "Create"} New Task</DialogTitle>
           <DialogDescription>
             Provide key information such as task name, description and due date
             etc.

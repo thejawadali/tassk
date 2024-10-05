@@ -11,7 +11,6 @@ export default function Tasks({ type }: { type: TaskType }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
-  const [taskToEdit, setTaskToEdit] = useState<Task>();
   const fetchTasks = async () => {
     setLoading(true);
     const { data } = await axios.get("/api/tasks?type=" + type);
@@ -22,12 +21,6 @@ export default function Tasks({ type }: { type: TaskType }) {
     fetchTasks();
   }, []);
 
-  function onOpenChange(open: boolean) {
-    setShowDialog(open);
-    if (!open) {
-      setTaskToEdit(undefined);
-    }
-  }
 
   function onToggleComplete(taskId: string) {
     const index = tasks.findIndex((task) => task.id === taskId);
@@ -35,6 +28,14 @@ export default function Tasks({ type }: { type: TaskType }) {
     newTasks[index].completed = !newTasks[index].completed;
     setTasks(newTasks);
   }
+
+  function onEditComplete(task: Task) {
+    const newTasks = [...tasks];
+    const index = newTasks.findIndex((t) => t.id === task.id);
+    newTasks[index] = task;
+    setTasks(newTasks);
+  }
+
   function onDeleteComplete(taskId: string) {
     const newTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(newTasks);
@@ -43,10 +44,6 @@ export default function Tasks({ type }: { type: TaskType }) {
     setTasks([...tasks, task]);
   }
 
-  function openEditDialog(task: Task) {
-    setTaskToEdit(task);
-    setShowDialog(true);
-  }
 
   if (loading) {
     return (
@@ -72,22 +69,17 @@ export default function Tasks({ type }: { type: TaskType }) {
         {tasks.map((task) => (
           <TaskItem
             key={task.id}
-            title={task.title}
-            description={task.description}
-            date={task.date}
-            isCompleted={task.completed}
+            task={task}
             onDeleteComplete={() => onDeleteComplete(task.id)}
-            id={task.id}
             onToggleComplete={() => onToggleComplete(task.id)}
-            onEdit={() => openEditDialog(task)}
+            onEditComplete={onEditComplete}
           />
         ))}
         <EmptyTaskItem onClick={() => setShowDialog(true)} />
       </div>
       <CreateTaskDialog
         open={showDialog}
-        onOpenChange={onOpenChange}
-        task={taskToEdit}
+        onOpenChange={setShowDialog}
         onTaskCreated={onTaskCreated}
       />
     </>

@@ -5,31 +5,26 @@ import { LoaderCircleIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import CreateTaskDialog from "./CreateTaskDialog";
+import { Task } from "../../types";
 
 interface Props {
-  title: string;
-  description: string;
-  date: string;
-  id?: string;
-  isCompleted: boolean;
+  task: Task;
   onDeleteComplete: () => void;
   onToggleComplete: () => void;
-  onEdit: () => void;
+  onEditComplete: (task: Task) => void;
 }
 
 export default function TaskItem({
-  title,
-  description,
-  id,
-  date,
-  isCompleted,
+  task,
   onDeleteComplete,
   onToggleComplete,
-  onEdit,
+  onEditComplete,
 }: Props) {
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   async function toggleTaskCompleteStatus(
     event: React.MouseEvent<HTMLButtonElement>
@@ -37,8 +32,8 @@ export default function TaskItem({
     event.stopPropagation();
     setStatusUpdating(true);
     try {
-      await axios.patch(`/api/tasks/${id}/toggle-complete`, {
-        completed: !isCompleted,
+      await axios.patch(`/api/tasks/${task.id}/toggle-complete`, {
+        completed: !task.completed,
       });
       onToggleComplete();
     } catch (error) {
@@ -49,22 +44,21 @@ export default function TaskItem({
   }
 
   async function deleteTask() {
-    setLoading(true)
+    setLoading(true);
     try {
-      await axios.delete(`/api/tasks/${id}`);
-      onDeleteComplete()
+      await axios.delete(`/api/tasks/${task.id}`);
+      onDeleteComplete();
     } catch (error) {
       console.log(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
-
 
   return (
     <>
       <div
-        onClick={() => (loading ? null : onEdit())}
+        onClick={() => (loading ? null : setShowEditDialog(true))}
         className="py-[1.2rem] hover:shadow-2xl cursor-pointer relative px-4 overflow-hidden rounded-2xl group bg-zinc-100 dark:bg-zinc-700 border-2 dark:border-zinc-600 border-zinc-200 h-[16rem] flex flex-col gap-2"
       >
         {loading && (
@@ -74,7 +68,7 @@ export default function TaskItem({
         )}
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold max-h-[1.8rem] truncate">
-            {title}
+            {task.title}
           </h1>
           <Popover open={showConfirmation} onOpenChange={setShowConfirmation}>
             <PopoverTrigger asChild>
@@ -118,21 +112,27 @@ export default function TaskItem({
         </div>
         {/* date */}
         <p className="text-sm opacity-50">
-          {dayjs(date).format("MMM D, YYYY")}
+          {dayjs(task.date).format("MMM D, YYYY")}
         </p>
-        <p className="text-sm overflow-hidden h-32">{description}</p>
+        <p className="text-sm overflow-hidden h-32">{task.description}</p>
         {/* footer */}
         <div className="flex items-center gap-5">
           <Button
             className="w-full"
             onClick={toggleTaskCompleteStatus}
             loading={statusUpdating}
-            variant={isCompleted ? "destructive" : "default"}
+            variant={task.completed ? "destructive" : "default"}
           >
-            Mark as {isCompleted ? "Incomplete" : "Complete"}
+            Mark as {task.completed ? "Incomplete" : "Complete"}
           </Button>
         </div>
       </div>
+      <CreateTaskDialog
+        open={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        onTaskCreated={onEditComplete}
+        task={task}
+      />
     </>
   );
 }

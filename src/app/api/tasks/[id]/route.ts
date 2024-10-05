@@ -29,7 +29,7 @@ export async function GET(_req: Request,
   }
 }
 
-export async function PUT(_req: Request, { params, request }: { params: { id: string }, request: Request }) {
+export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
     const { userId } = auth()
     const { id } = params
