@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { NextResponse } from "next/server"
-import { PrismaClient } from '@prisma/client'
+import { db as prisma } from "@/utils/db"
 import { auth } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 import { TaskType } from "../../../../types"
-const prisma = new PrismaClient()
 
 export async function POST(request: Request) {
   try {

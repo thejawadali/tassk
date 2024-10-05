@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { db as prisma } from "@/utils/db"
 import { auth } from "@clerk/nextjs/server"
-import { PrismaClient } from "@prisma/client"
 import { NextResponse } from "next/server"
-
-const prisma = new PrismaClient()
 
 export async function GET(_req: Request,
   { params }: { params: { id: string } }) {
