@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { ThemeProvider } from "@/components/theme-provider";
-import localFont from "next/font/local";
-import "./globals.css";
-import Sidebar from "../components/Sidebar";
+import { ThemeProvider } from "@/components/theme-provider"
+import { ClerkProvider } from "@clerk/nextjs"
+import type { Metadata } from "next"
+import localFont from "next/font/local"
+import Sidebar from "../components/Sidebar"
+import "./globals.css"
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,6 +21,9 @@ export const metadata: Metadata = {
   title: "Next Tasks",
   description: "Tasks Managements App created with Next.js",
 };
+
+
+
 
 export default function RootLayout({
   children,

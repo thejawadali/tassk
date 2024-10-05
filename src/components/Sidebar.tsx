@@ -29,9 +29,12 @@ export default function Sidebar() {
   const { user } = useUser();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(true);
-
+  
   const { setTheme } = useTheme();
-
+  if (pathname == "/login") {
+    return null;
+  }
+  
   const menu = [
     {
       id: 1,
