@@ -1,5 +1,5 @@
 "use client";
-import { SignInButton, SignedOut } from "@clerk/nextjs";
+import { SignInButton, SignedOut, SignOutButton } from "@clerk/nextjs";
 
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
@@ -10,15 +10,28 @@ import {
   LoaderCircleIcon,
   LogOutIcon,
   MenuIcon,
+  MoonIcon,
+  SunIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 import NavItem from "./NavItem";
 import { useState } from "react";
+import { Button } from "./ui/button";
+import { useTheme } from "next-themes";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default function Sidebar() {
   const { user } = useUser();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(true);
+
+  const { setTheme } = useTheme();
+
   const menu = [
     {
       id: 1,
@@ -46,6 +59,13 @@ export default function Sidebar() {
     },
   ];
 
+  function handleUserButtonClick() {
+    const button = document.querySelector(".cl-userButtonTrigger");
+    if (button) {
+      (button as HTMLButtonElement).click();
+    }
+  }
+
   return (
     <div
       className={`absolute h-[calc(100vh-2rem)] transition-transform duration-300 ease-[cubic-bezier(0.53, 0.21, 0, 1)] ${
@@ -63,12 +83,15 @@ export default function Sidebar() {
       </button>
       {user ? (
         <>
-          <div className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-2xl cursor-pointer flex items-center gap-x-4">
+          <button
+            className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 p-3 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded-2xl cursor-pointer flex items-center gap-x-4"
+            onClick={handleUserButtonClick}
+          >
             <UserButton />
             <h1 className="capitalize relative z-10 text-base flex flex-col leading-6">
               {user?.firstName} {user?.lastName}
             </h1>
-          </div>
+          </button>
 
           <SignedOut>
             <SignInButton />
@@ -84,10 +107,37 @@ export default function Sidebar() {
               />
             ))}
           </div>
-          <button className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 hover:bg-zinc-100 dark:hover:bg-zinc-900 inline-flex items-center gap-x-4 p-3 rounded-xl">
-            <LogOutIcon size={20}></LogOutIcon>
+          <div className="flex justify-center gap-x-4">
+            <SignOutButton>
+              <Button variant="outline">
+                <LogOutIcon className="h-[1.2rem] w-[1.2rem]" />
+              </Button>
+            </SignOutButton>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                  <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <span className="sr-only">Toggle theme</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+          {/* <button className="hover:border-opacity-100 border-opacity-0 border-2 dark:border-zinc-700 mx-6 hover:bg-zinc-100 dark:hover:bg-zinc-900 inline-flex items-center gap-x-4 p-3 rounded-xl">
             Sign Out
-          </button>
+          </button> */}
         </>
       ) : (
         <div className="h-full flex justify-center items-center">
