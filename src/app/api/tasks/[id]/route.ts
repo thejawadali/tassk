@@ -1,36 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { db as prisma } from "@/utils/db"
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
-
-// export async function GET(_req: Request,
-//   { params }: { params: { id: string } }) {
-
-//   try {
-//     const { userId } = auth()
-//     const { id } = params
-//     if (!userId) {
-//       return new NextResponse("Unauthorized", { status: 401 })
-//     }
-//     const task = await prisma.task.findUnique({
-//       where: {
-//         id,
-//         userId
-//       },
-//     })
-//     if (!task) {
-//       return NextResponse.json({ error: "Task not found" }, { status: 400 })
-//     }
-//     return NextResponse.json({ task }, { status: 200 })
-//   } catch (error) {
-//     return NextResponse.json({ error: "Error getting task", status: 400 })
-//   }
-// }
+import connectDB from "@/lib/db"
+import Task from "@/models/Task"
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   try {
+    await connectDB();
     const { userId } = auth()
     const { id } = params
+    debugger
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
@@ -39,19 +18,13 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
     }
 
-    const task = await prisma.task.update({
-      where: {
-        id,
-        userId
-      },
-      data: {
-        title,
-        description,
-        date,
-        completed,
-        important
-      },
-    })
+    const task = await Task.findByIdAndUpdate(id, {
+      title,
+      description,
+      date,
+      completed,
+      important
+    }, { new: true })
 
     return NextResponse.json({ task }, { status: 200 })
 
@@ -62,6 +35,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   try {
+    await connectDB();
     const { userId } = auth()
     const { id } = params
 
@@ -69,11 +43,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const task = await prisma.task.delete({
-      where: {
-        id, userId
-      },
-    })
+    const task = await Task.findByIdAndDelete(id)
 
     return NextResponse.json({ task }, { status: 200 })
   } catch (error) {

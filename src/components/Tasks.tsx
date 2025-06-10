@@ -16,7 +16,7 @@ export default function Tasks({ type }: { type: TaskType }) {
     setLoading(true);
     const { data } = await axios.get("/api/tasks?type=" + type);
     setLoading(false);
-    setTasks(data.tasks);
+    setTasks(data);
   };
   useEffect(() => {
     fetchTasks();

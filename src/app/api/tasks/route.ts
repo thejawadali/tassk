@@ -1,41 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { db as prisma } from "@/utils/db"
+import { NextResponse } from 'next/server';
+import connectDB from '@/lib/db';
+import Task from '@/models/Task';
 import { auth } from "@clerk/nextjs/server"
-import { NextResponse } from "next/server"
-import { TaskType } from "../../../../types"
+import { Task as ITask, TaskType } from "../../../../types"
 
-export async function POST(request: Request) {
-  try {
-    const { userId } = auth()
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-    const { title, description, date, completed, important } = await request.json()
-    if (!title) {
-      return NextResponse.json({ error: 'Title is required' }, { status: 400 })
-    }
-
-    const task = await prisma.task.create({
-      data: {
-        title,
-        description,
-        date,
-        userId,
-        completed,
-        important
-      },
-    })
-    return NextResponse.json({ task }, { status: 201 })
-
-  } catch (error) {
-    return NextResponse.json({ error: "Error creating task" }, { status: 400 })
-  }
-}
-
-export async function GET(req: Request) {
-  const url = new URL(req.url)
+export async function GET(request: Request) {
+  const url = new URL(request.url)
   const type = url.searchParams.get("type") as TaskType
-  console.log(type)
 
   let obj = {}
   switch (type) {
@@ -65,22 +37,38 @@ export async function GET(req: Request) {
     default:
       break
   }
-
-
   try {
+    await connectDB();
     const { userId } = auth()
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
-    const tasks = await prisma.task.findMany({
-      where: {
-        userId,
-        ...obj
-      },
-    })
-    return NextResponse.json({ tasks }, { status: 200 })
+    const tasks = await Task.find({ ...obj, userId });
+    return NextResponse.json(tasks);
   } catch (error) {
-    return NextResponse.json({ error: "Error fetching tasks" }, { status: 400 })
+    console.log(error)
+    return NextResponse.json({ error: 'Failed to fetch tasks' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    await connectDB();
+    const { userId } = auth()
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+    const body = await request.json();
+    const task: ITask = await Task.create({ ...body, userId });
+
+    if (!task.title) {
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+    }
+
+
+    return NextResponse.json(task);
+  } catch (error) {
+    console.log(error)
+    return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
   }
 }

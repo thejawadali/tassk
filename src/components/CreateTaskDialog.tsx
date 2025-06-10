@@ -54,16 +54,15 @@ export default function CreateTaskDialog({
       let response = null;
       if (task) {
         // updating
-        response = await axios.put(`/api/tasks/${task.id}`, values);
+        response = await axios.put(`/api/tasks/${task._id}`, values);
       } else {
         // create new one
         response = await axios.post("/api/tasks", values);
       }
 
-      onTaskCreated(response.data.task as Task);
+      onTaskCreated(response.data as Task);
       onOpenChange(false);
       setSavingTask(false);
-      console.log(response);
 
       toast({
         title: "Scheduled: Catch up ",

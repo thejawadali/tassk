@@ -32,7 +32,7 @@ export default function TaskItem({
     event.stopPropagation();
     setStatusUpdating(true);
     try {
-      await axios.patch(`/api/tasks/${task.id}/toggle-complete`, {
+      await axios.patch(`/api/tasks/${task._id}/toggle-complete`, {
         completed: !task.completed,
       });
       onToggleComplete();
@@ -46,7 +46,7 @@ export default function TaskItem({
   async function deleteTask() {
     setLoading(true);
     try {
-      await axios.delete(`/api/tasks/${task.id}`);
+      await axios.delete(`/api/tasks/${task._id}`);
       onDeleteComplete();
     } catch (error) {
       console.log(error);
