@@ -9,7 +9,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     await connectDB();
     const { userId } = auth()
     const { id } = params
-    debugger
     if (!userId) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
@@ -18,7 +17,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
     }
 
-    const task = await Task.findByIdAndUpdate(id, {
+    const task = await Task.findOneAndUpdate({_id: id, userId}, {
       title,
       description,
       date,
@@ -43,7 +42,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const task = await Task.findByIdAndDelete(id)
+    const task = await Task.findOneAndDelete({_id: id, userId})
 
     return NextResponse.json({ task }, { status: 200 })
   } catch (error) {

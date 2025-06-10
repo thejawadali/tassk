@@ -51,16 +51,15 @@ export default function CreateTaskDialog({
     }),
     onSubmit: async (values) => {
       setSavingTask(true);
-      let response = null;
       if (task) {
         // updating
-        response = await axios.put(`/api/tasks/${task._id}`, values);
+        const { data } = await axios.put(`/api/tasks/${task._id}`, values);
+        onTaskCreated(data.task);
       } else {
         // create new one
-        response = await axios.post("/api/tasks", values);
+        const { data } = await axios.post("/api/tasks", values);
+        onTaskCreated(data);
       }
-
-      onTaskCreated(response.data as Task);
       onOpenChange(false);
       setSavingTask(false);
 

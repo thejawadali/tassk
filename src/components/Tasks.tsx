@@ -23,8 +23,8 @@ export default function Tasks({ type }: { type: TaskType }) {
   }, []);
 
 
-  function onToggleComplete(taskId: string) {
-    const index = tasks.findIndex((task) => task.id === taskId);
+  function onToggleComplete(taskId: unknown) {
+    const index = tasks.findIndex((task) => task._id === taskId);
     const newTasks = [...tasks];
     newTasks[index].completed = !newTasks[index].completed;
     setTasks(newTasks);
@@ -32,16 +32,18 @@ export default function Tasks({ type }: { type: TaskType }) {
 
   function onEditComplete(task: Task) {
     const newTasks = [...tasks];
-    const index = newTasks.findIndex((t) => t.id === task.id);
+    const index = newTasks.findIndex((t) => t._id === task._id);
     newTasks[index] = task;
     setTasks(newTasks);
   }
 
-  function onDeleteComplete(taskId: string) {
-    const newTasks = tasks.filter((task) => task.id !== taskId);
+  function onDeleteComplete(taskId: unknown) {
+    const newTasks = tasks.filter((task) => task._id !== taskId);
     setTasks(newTasks);
   }
   function onTaskCreated(task: Task) {
+    console.log(task, tasks);
+    
     setTasks([...tasks, task]);
   }
 
@@ -69,10 +71,10 @@ export default function Tasks({ type }: { type: TaskType }) {
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
         {tasks.map((task) => (
           <TaskItem
-            key={task.id}
+            key={task._id as string}
             task={task}
-            onDeleteComplete={() => onDeleteComplete(task.id)}
-            onToggleComplete={() => onToggleComplete(task.id)}
+            onDeleteComplete={() => onDeleteComplete(task._id)}
+            onToggleComplete={() => onToggleComplete(task._id)}
             onEditComplete={onEditComplete}
           />
         ))}
