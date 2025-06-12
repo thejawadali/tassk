@@ -57,14 +57,19 @@ export default function Tasks({ type, showAddNewButton }: { type: TaskType, show
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-clamp">All Tasks</h1>
+        <h1 className="text-clamp">{type === "all" ? "All Tasks" : type === "important" ? "Important Tasks" : type === "urgent" ? "Urgent Tasks" : "Completed Tasks"}</h1>
         {/* {taskToEdit?.title} */}
-        <button
-          className="rounded-full p-2 border border-dashed"
-          onClick={() => setShowDialog(true)}
-        >
-          <PlusIcon size={20} />
-        </button>
+        {
+          showAddNewButton &&
+          (
+            <button
+            className="rounded-full p-2 border border-dashed"
+            onClick={() => setShowDialog(true)}
+            >
+            <PlusIcon size={20} />
+          </button>
+          )
+        }
       </div>
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
         {tasks.map((task) => (
