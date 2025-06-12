@@ -36,7 +36,6 @@ export default function CreateTaskDialog({
   const [savingTask, setSavingTask] = useState(false);
   // get route
   const pathname = usePathname();
-  console.log(pathname);
   const { toast } = useToast();
   const formik = useFormik({
     initialValues: {
