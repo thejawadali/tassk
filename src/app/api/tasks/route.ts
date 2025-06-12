@@ -29,8 +29,8 @@ export async function GET(request: Request) {
       endOfToday.setHours(23, 59, 59, 999)
       obj = {
         important: true, completed: false, date: {
-          gte: startOfToday,
-          lte: endOfToday,
+          $gte: startOfToday,
+          $lte: endOfToday,
         }
       }
 

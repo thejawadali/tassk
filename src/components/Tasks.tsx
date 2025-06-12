@@ -8,7 +8,7 @@ import EmptyTaskItem from "./EmptyTaskItem";
 import { useEffect, useState } from "react";
 import { LoaderCircleIcon, PlusIcon } from "lucide-react";
 
-export default function Tasks({ type }: { type: TaskType }) {
+export default function Tasks({ type, showAddNewButton }: { type: TaskType, showAddNewButton: boolean }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
@@ -42,8 +42,6 @@ export default function Tasks({ type }: { type: TaskType }) {
     setTasks(newTasks);
   }
   function onTaskCreated(task: Task) {
-    console.log(task, tasks);
-    
     setTasks([...tasks, task]);
   }
 
@@ -78,7 +76,11 @@ export default function Tasks({ type }: { type: TaskType }) {
             onEditComplete={onEditComplete}
           />
         ))}
-        <EmptyTaskItem onClick={() => setShowDialog(true)} />
+        {
+          showAddNewButton && (
+            <EmptyTaskItem onClick={() => setShowDialog(true)} />
+          )
+        }
       </div>
       <CreateTaskDialog
         open={showDialog}

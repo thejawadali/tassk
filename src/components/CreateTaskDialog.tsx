@@ -1,23 +1,24 @@
 "use client";
-import axios from "axios";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { Task } from "../../types";
-import { useToast } from "../hooks/use-toast";
-import { Button } from "./ui/button";
-import { DatePicker } from "./ui/datepicker";
+import axios from "axios"
+import { useFormik } from "formik"
+import { usePathname } from "next/navigation"
+import { useState } from "react"
+import * as yup from "yup"
+import { Task } from "../../types"
+import { useToast } from "../hooks/use-toast"
+import { Button } from "./ui/button"
+import { DatePicker } from "./ui/datepicker"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
-import { Textarea } from "./ui/textarea";
-import { useState } from "react";
+} from "./ui/dialog"
+import { Input } from "./ui/input"
+import { Label } from "./ui/label"
+import { Switch } from "./ui/switch"
+import { Textarea } from "./ui/textarea"
 
 interface Props {
   open: boolean;
@@ -33,6 +34,9 @@ export default function CreateTaskDialog({
   onTaskCreated,
 }: Props) {
   const [savingTask, setSavingTask] = useState(false);
+  // get route
+  const pathname = usePathname();
+  console.log(pathname);
   const { toast } = useToast();
   const formik = useFormik({
     initialValues: {
@@ -40,7 +44,7 @@ export default function CreateTaskDialog({
       description: task?.description || "",
       date: new Date(task?.date || new Date()),
       completed: task?.completed || false,
-      important: task?.important || false,
+      important: task?.important || pathname.includes("important") || false,
     },
     validationSchema: yup.object({
       title: yup.string().required("Title is required"),
